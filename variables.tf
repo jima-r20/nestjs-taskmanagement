@@ -4,6 +4,8 @@ variable "availability_zones" {
   type = list
 }
 
+variable "account_id" {}
+
 variable "env_name" {}
 
 variable "vpc_cidr" {}

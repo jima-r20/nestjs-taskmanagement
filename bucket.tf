@@ -17,7 +17,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
       "Sid": "AllowWriteObjectPolicy",
       "Effect": "Allow",
       "Principal": {
-          "AWS": "arn:aws:iam::368809054925:role/aws-elasticbeanstalk-ec2-role"
+          "AWS": "arn:aws:iam::${var.account_id}:role/aws-elasticbeanstalk-ec2-role"
       },
       "Action": "s3:PutObject",
       "Resource": "arn:aws:s3:::${aws_s3_bucket.nestjs_app_bucket.bucket}/resources/environments/logs/*"
@@ -26,7 +26,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
       "Sid": "AllowReadBucketObjectPolicy",
       "Effect": "Allow",
       "Principal":{
-          "AWS": "arn:aws:iam::368809054925:role/aws-elasticbeanstalk-ec2-role"
+          "AWS": "arn:aws:iam::${var.account_id}:role/aws-elasticbeanstalk-ec2-role"
       },
       "Action": [
         "s3:ListBucket",
