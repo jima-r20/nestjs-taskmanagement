@@ -50,7 +50,7 @@ resource "aws_db_instance" "nestjs_app_db" {
   engine                  = "postgres"
   engine_version          = "12.3"
   instance_class          = "db.t2.micro"
-  name                    = "${var.env_name}-db"
+  name                    = var.db_name
   username                = var.db_username
   password                = var.db_password
   db_subnet_group_name    = aws_db_subnet_group.nestjs_db_subnet_group.name

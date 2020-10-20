@@ -10,8 +10,8 @@ resource "aws_security_group" "beanstalk_vm_sg" {
   }
 
   egress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 0
+    to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }

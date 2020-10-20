@@ -8,6 +8,8 @@ variable "env_name" {}
 
 variable "vpc_cidr" {}
 
+variable "db_name" {}
+
 variable "db_username" {
   # terraform plan時に入力
 }
