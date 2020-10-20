@@ -11,7 +11,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
 
   policy = <<POLICY
 {
-  "Version": "2012-10-17",
+  "Version": "2008-10-17",
   "Statement": [
     {
       "Sid": "AllowWriteObjectPolicy",
@@ -20,7 +20,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
           "AWS": "arn:aws:iam::368809054925:role/aws-elasticbeanstalk-ec2-role"
       },
       "Action": "s3:PutObject",
-      "Resource": "arn:aws:s3:::${aws_s3_bucket.nestjs_app_bucket.id}/resources/environments/logs/*"
+      "Resource": "arn:aws:s3:::${aws_s3_bucket.nestjs_app_bucket.bucket}/resources/environments/logs/*"
     },
     {
       "Sid": "AllowReadBucketObjectPolicy",
@@ -35,8 +35,8 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
         "s3:GetObjectVersion"
       ],
       "Resource": [
-        "arn:aws:s3:::${aws_s3_bucket.nestjs_app_bucket.id}",
-        "arn:aws:s3:::${aws_s3_bucket.nestjs_app_bucket.id}/resources/environments/*"
+        "arn:aws:s3:::${aws_s3_bucket.nestjs_app_bucket.bucket}",
+        "arn:aws:s3:::${aws_s3_bucket.nestjs_app_bucket.bucket}/resources/environments/*"
       ]
     },
     {
@@ -46,7 +46,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
         "AWS":"*"
       },
       "Action": "s3:DeleteBucket",
-      "Resource": "arn:aws:s3:::e${aws_s3_bucket.nestjs_app_bucket.id}"
+      "Resource": "arn:aws:s3:::${aws_s3_bucket.nestjs_app_bucket.bucket}"
     }
   ]
 }
