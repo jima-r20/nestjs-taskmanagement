@@ -5,3 +5,5 @@ env_name = "nestjs-app"
 db_name = "NestjsAppDB"
 
 vpc_cidr = "10.0.0.0/16"
+
+dist_zip = "nestjs-app.zip"

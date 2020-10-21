@@ -6,6 +6,12 @@ resource "aws_s3_bucket" "nestjs_app_bucket" {
   }
 }
 
+resource "aws_s3_bucket_object" "dist_item" {
+  key    = "dist-${uuid()}.zip"
+  bucket = aws_s3_bucket.nestjs_app_bucket.id
+  source = var.dist_zip
+}
+
 resource "aws_s3_bucket_policy" "s3_bucket_policy" {
   bucket = aws_s3_bucket.nestjs_app_bucket.id
 

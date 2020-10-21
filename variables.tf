@@ -19,3 +19,7 @@ variable "db_username" {
 variable "db_password" {
   # terraform plan時に入力
 }
+
+variable "jwt_secret" {}
+
+variable "dist_zip" {}
