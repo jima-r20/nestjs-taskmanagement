@@ -13,6 +13,12 @@ $ export TF_VAR_account_id = 111XXXXXXX
 $ export TF_VAR_db_username = XXXXXXXXX
 $ export TF_VAR_db_password = XXXXXXXX
 $ export TF_VAR_jwt_secret = XXXXXXXXXXX
+
+環境変数の確認
+$ env | grep TF_VAR
+
+削除する場合は以下を実行
+$ unset TF_VAR_account_id
 ```
 
 Terraform の実行
