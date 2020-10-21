@@ -53,6 +53,7 @@ resource "aws_db_instance" "nestjs_app_db" {
   name                    = var.db_name
   username                = var.db_username
   password                = var.db_password
+  port                    = var.db_port
   db_subnet_group_name    = aws_db_subnet_group.nestjs_db_subnet_group.name
   vpc_security_group_ids  = [aws_security_group.nestjs_app_db_sg.id]
   parameter_group_name    = aws_db_parameter_group.nestjs_app_db_pg.name

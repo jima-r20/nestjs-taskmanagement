@@ -7,7 +7,7 @@ resource "aws_elastic_beanstalk_application" "nestjs_app" {
 }
 
 resource "aws_elastic_beanstalk_application_version" "nestjs_app_ver" {
-  name        = "v1"
+  name        = var.eb_version
   application = aws_elastic_beanstalk_application.nestjs_app.name
   bucket      = aws_s3_bucket.nestjs_app_bucket.id
   key         = aws_s3_bucket_object.dist_item.id
@@ -16,161 +16,179 @@ resource "aws_elastic_beanstalk_application_version" "nestjs_app_ver" {
 resource "aws_elastic_beanstalk_environment" "nestjs_app_eb_env" {
   name                = "${var.env_name}-env"
   application         = aws_elastic_beanstalk_application.nestjs_app.name
-  solution_stack_name = "64bit Amazon Linux 2 v5.2.2 running Node.js 12"
+  solution_stack_name = var.eb_platform
+
+  # setting {
+  #   name      = "DBAllocatedStorage"
+  #   namespace = "aws:rds:dbinstance"
+  #   value     = 10
+  # }
+
+  # setting {
+  #   name      = "DBEngine"
+  #   namespace = "aws:rds:dbinstance"
+  #   value     = "postgres"
+  # }
+
+  # setting {
+  #   name      = "DBEngineVersion"
+  #   namespace = "aws:rds:dbinstance"
+  #   value     = 12
+  # }
+
+  # setting {
+  #   name      = "DBInstanceClass"
+  #   namespace = "aws:rds:dbinstance"
+  #   value     = "db.t2.micro"
+  # }
+
+  # setting {
+  #   name      = "DBPassword"
+  #   namespace = "aws:rds:dbinstance"
+  #   value     = var.db_password
+  # }
+
+  # setting {
+  #   name      = "DBUser"
+  #   namespace = "aws:rds:dbinstance"
+  #   value     = var.db_username
+  # }
 
   setting {
-    name      = "DBAllocatedStorage"
-    namespace = "aws:rds:dbinstance"
-    value     = 10
+    namespace = "aws:autoscaling:asg"
+    name      = "MaxSize"
+    value     = 1
   }
 
   setting {
-    name      = "DBEngine"
-    namespace = "aws:rds:dbinstance"
-    value     = "postgres"
+    namespace = "aws:autoscaling:asg"
+    name      = "MinSize"
+    value     = 1
   }
 
   setting {
-    name      = "DBEngineVersion"
-    namespace = "aws:rds:dbinstance"
-    value     = 12
-  }
-
-  setting {
-    name      = "DBInstanceClass"
-    namespace = "aws:rds:dbinstance"
-    value     = "db.t2.micro"
-  }
-
-  setting {
-    name      = "DBPassword"
-    namespace = "aws:rds:dbinstance"
-    value     = var.db_password
-  }
-
-  setting {
-    name      = "DBUser"
-    namespace = "aws:rds:dbinstance"
-    value     = var.db_username
-  }
-
-  setting {
-    name      = "EnvironmentType"
-    namespace = "aws:elasticbeanstalk:environment"
-    value     = "SingleInstance"
-  }
-
-  setting {
-    name      = "EnvironmentVariables"
-    namespace = "aws:cloudformation:template:parameter"
-    value     = "JWT_SECRET=${var.jwt_secret},TYPEORM_SYNC=true"
-  }
-
-  setting {
-    name      = "IamInstanceProfile"
     namespace = "aws:autoscaling:launchconfiguration"
+    name      = "IamInstanceProfile"
     value     = "aws-elasticbeanstalk-ec2-role"
   }
 
   setting {
-    name      = "ImageId"
     namespace = "aws:autoscaling:launchconfiguration"
-    value     = "ami-06408fceda92d06c0"
+    name      = "ImageId"
+    value     = var.eb_ami
   }
 
   setting {
-    name      = "ImageId"
     namespace = "aws:autoscaling:launchconfiguration"
-    value     = "ami-06408fceda92d06c0"
-  }
-
-  setting {
     name      = "InstanceType"
-    namespace = "aws:autoscaling:launchconfiguration"
     value     = "t2.micro"
   }
 
   setting {
-    name      = "InstanceTypes"
-    namespace = "aws:ec2:instances"
-    value     = "t2.micro, t2.small"
-  }
-
-  setting {
-    name      = "JWT_SECRET"
-    namespace = "aws:elasticbeanstalk:application:environment"
-    value     = var.jwt_secret
-  }
-
-  setting {
-    name      = "MaxSize"
-    namespace = "aws:autoscaling:asg"
-    value     = 1
-  }
-
-  setting {
-    name      = "MinSize"
-    namespace = "aws:autoscaling:asg"
-    value     = 1
-  }
-
-  setting {
-    name      = "PreferredStartTime"
-    namespace = "aws:elasticbeanstalk:managedactions"
-    value     = "Sun:09:00"
-  }
-
-  setting {
-    name      = "SSHSourceRestriction"
     namespace = "aws:autoscaling:launchconfiguration"
+    name      = "SSHSourceRestriction"
     value     = "tcp,22,22,0.0.0.0/0"
   }
 
   setting {
-    name      = "SecurityGroups"
     namespace = "aws:autoscaling:launchconfiguration"
+    name      = "SecurityGroups"
     value     = aws_security_group.beanstalk_vm_sg.id
   }
 
   setting {
-    name      = "ServiceRole"
-    namespace = "aws:elasticbeanstalk:environment"
-    value     = "arn:aws:iam::${var.account_id}:role/aws-elasticbeanstalk-service-role"
+    namespace = "aws:ec2:instances"
+    name      = "InstanceTypes"
+    value     = "t2.micro, t2.small"
   }
 
   setting {
-    name      = "ServiceRoleForManagedUpdates"
-    namespace = "aws:elasticbeanstalk:managedactions"
-    value     = "arn:aws:iam::${var.account_id}:role/aws-elasticbeanstalk-service-role"
-  }
-
-  setting {
-    name      = "Subnets"
     namespace = "aws:ec2:vpc"
+    name      = "Subnets"
     value     = aws_subnet.nestjs_app_subnet.0.id
   }
 
   setting {
-    name      = "SystemType"
-    namespace = "aws:elasticbeanstalk:healthreporting:system"
-    value     = "enhanced"
+    namespace = "aws:ec2:vpc"
+    name      = "VPCId"
+    value     = aws_vpc.nestjs_app_vpc.id
   }
 
   setting {
-    name      = "TYPEORM_SYNC"
     namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "JWT_SECRET"
+    value     = var.jwt_secret
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "TYPEORM_SYNC"
     value     = true
   }
 
   setting {
-    name      = "UpdateLevel"
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "RDS_DB_NAME"
+    value     = aws_db_instance.nestjs_app_db.name
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "RDS_HOSTNAME"
+    value     = aws_db_instance.nestjs_app_db.address
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "RDS_PORT"
+    value     = aws_db_instance.nestjs_app_db.port
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "RDS_USERNAME"
+    value     = aws_db_instance.nestjs_app_db.username
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "RDS_PASSWORD"
+    value     = aws_db_instance.nestjs_app_db.password
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "EnvironmentType"
+    value     = "SingleInstance"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "ServiceRole"
+    value     = "arn:aws:iam::${var.account_id}:role/aws-elasticbeanstalk-service-role"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:managedactions"
+    name      = "PreferredStartTime"
+    value     = "Sun:09:00"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:managedactions"
+    name      = "ServiceRoleForManagedUpdates"
+    value     = "arn:aws:iam::${var.account_id}:role/aws-elasticbeanstalk-service-role"
+  }
+
+  setting {
     namespace = "aws:elasticbeanstalk:managedactions:platformupdate"
+    name      = "UpdateLevel"
     value     = "minor"
   }
 
   setting {
-    name      = "VPCId"
-    namespace = "aws:ec2:vpc"
-    value     = aws_vpc.nestjs_app_vpc.id
+    namespace = "aws:elasticbeanstalk:healthreporting:system"
+    name      = "SystemType"
+    value     = "enhanced"
   }
 }
